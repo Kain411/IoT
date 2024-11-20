@@ -14,8 +14,10 @@ const DeviceForm = ({olders, device}) => {
 
     const fetchMagament = async () => {
         try {
+            // get tất cả document của collection magament trong firestore
             const query = await getDocs(collection(fs, 'magament'));
 
+            // kiểm tra xem thiết bị hiện tại đang được older nào sử hữu
             query.forEach((doc) => {
                 const data = doc.data()
                 if (data.idDevice === device.getId()) {

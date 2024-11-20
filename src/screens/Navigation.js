@@ -6,10 +6,14 @@ import DeviceHome from "./DeviceHome";
 const Navigation = ({olders, devices}) => {
 
     return (
+        // chuyển trang
         <BrowserRouter>
             <Routes>
+                {/* path "/" chuyển về trang Login */}
                 <Route path="/" element={<LogIn />} index/>
-                <Route path="/olders" element={<OlderHome olders={olders} devices={devices} />} index/>
+                {/* path "/olders" chuyển sang trang OlderHome */}
+                <Route path="/olders" element={<OlderHome olders={olders} devices={devices} />} />
+                {/* path "/devices" chuyển sang trang DeviceHome */}
                 <Route path="/devices" element={<DeviceHome olders={olders} devices={devices} />} />
             </Routes>
         </BrowserRouter>

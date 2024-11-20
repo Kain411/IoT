@@ -11,10 +11,13 @@ const OlderHome = ({olders, devices}) => {
 
     const [username, setUsername] = useState("Tzei Kain")
     const [contentSearch, setContentSearch] = useState("")
+
+    // lưu trữ lần lượt giá trị của: temperature, humidity, motion
     const [temperature, setTemperature] = useState(25)
     const [humidity, setHumidity] = useState(80)
     const [motion, setMotion] = useState(1)
 
+    // liên tục lấy dự liệu của sensor_in_room trong realtime của fb sau mỗi 1000ms
     useEffect(() => {
         const dbRef = ref(db, '/sensor_in_room');
         onValue(dbRef, (sn) => {
@@ -24,7 +27,7 @@ const OlderHome = ({olders, devices}) => {
             setMotion(value["motion"])
 
         });
-    }, [])
+    }, [1000])
 
     return (
         <div className="container">
@@ -50,6 +53,10 @@ const OlderHome = ({olders, devices}) => {
             </div>
 
             {
+                // toán tử 2 ngôi:
+                // vd: x>1 ? console.log("Correct") : console.log("Incorrect")
+                // x=2: -> in "Correct"
+                // x=0: -> in "Incorrect"
                 motion==1 ? 
                 <ul className='motion'>
                     <li className='motion-on'>Moving</li>
@@ -78,9 +85,10 @@ const OlderHome = ({olders, devices}) => {
                 {
                     olders.map((older) => {
 
+                        // kiểm tra xem nội dung người dùng nhập vào tìm kiếm có khớp với tên của bất cứ older nào không
                         if (contentSearch==="" || older.getName().toLowerCase().includes(contentSearch.toLowerCase())) {
                             return (
-                                <OlderForm key={older.getId()} user={older} devices={devices} />
+                                <OlderForm key={older.getId()} older={older} devices={devices} />
                             )
                         }
                     })

@@ -1,18 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeviceForm from "./DeviceForm";
 import { useState } from "react";
 
 const DeviceHome = ({olders, devices}) => {
 
+    const navigate = useNavigate()
+
     const [contentSearch, setContentSearch] = useState("")
 
     return (
         <div className="container">
-            <Link to={"/olders"} className="link">
-                <button className="btn-back">
-                    <img src={require("../assets/back.png")} className="icon-back" />
-                </button>
-            </Link>
+            <button className="btn-back" onClick={() => navigate("/olders")}>
+                <img src={require("../assets/back.png")} className="icon-back" />
+            </button>
 
             <div className="devices-header">
                 Devices

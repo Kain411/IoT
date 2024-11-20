@@ -5,6 +5,8 @@ const ChooseOlder = ({olders, device, magamentID}) => {
 
     const [contentSearch, setContentSearch] = useState("")
 
+    // cái này nó giống cái search bên olderHome thôi
+    // khi người dùng chọn vào older mong muốn thì sẽ update lại thông tin trong firestor
     return (
         <div className="details-main choose-container">
             <div className='search choose-older-search'>

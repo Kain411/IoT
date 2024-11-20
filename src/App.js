@@ -13,6 +13,7 @@ function App() {
   const [olders, setOlders] = useState([])
   const [devices, setDevices] = useState([])
 
+//   get tất cả document của collection older trong firestore
   const fetchOlder = async () => {
       try {
           const lst = []
@@ -31,6 +32,7 @@ function App() {
   };
   fetchOlder();
 
+//   get tất cả document của collection device trong firestore
   const fetchDevice = async () => {
       try {
           const query = await getDocs(collection(fs, "device"));
@@ -50,6 +52,7 @@ function App() {
   fetchDevice();
 
   return (
+    // gọi component Navigation
     <Navigation olders={olders} devices={devices} />
   );
 }

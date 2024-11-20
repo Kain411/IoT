@@ -5,14 +5,15 @@ import { fs, db } from '../utils/firebase';
 import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 import { ref, onValue } from "firebase/database"
 
-const OlderDetails = ({user, devices, myDevice}) => {
+const OlderDetails = ({older, devices, myDevice}) => {
 
     const [heartRateData, setHeartRateData] = useState([]);
     const [run, setRun] = useState(false)
 
+    // như bên OlderForm
     const fetchResult = async () => {
         try {
-            const query = await getDoc(doc(fs, "result", user.getId()));
+            const query = await getDoc(doc(fs, "result", older.getId()));
         
             const str = query.data().value;
             const lst = str.split(",").map(Number);
@@ -23,6 +24,9 @@ const OlderDetails = ({user, devices, myDevice}) => {
     };
     useEffect(() => {fetchResult()}, [])
 
+    // cập nhật giá trị nhịp tim mới đo được vào firestore: 
+    // firestore lưu dạng string nên phải trong code phải convert từ list về string
+    // vd: [1, 2, 3] => "1,2,3"
     const updateResult = async (lst) => {
         let str = ""
         lst.forEach(e => {
@@ -30,7 +34,7 @@ const OlderDetails = ({user, devices, myDevice}) => {
         })
         str = str.substring(0, str.length-1)
         try {
-            const docRef = doc(fs, 'result', user.getId());
+            const docRef = doc(fs, 'result', older.getId());
             await setDoc(docRef, {
                 value: str
             });
@@ -38,19 +42,24 @@ const OlderDetails = ({user, devices, myDevice}) => {
         }
     }
 
+    // đọc liên tục giá trị mà sensor tim đo được đẩy lên realtime
     const updateRate = () => {
         const dbRef = ref(db, '/nhip_tim_1');
         onValue(dbRef, (snapshot) => {
             const value = snapshot.val();
             if (value && value.bpm && value.bpm!==heartRateData[heartRateData.length-1]) { 
+                // lấy 20 giá trị đo gần nhất để lưu vào firestore và vẽ đồ thị
                const lst = heartRateData.slice(-20)
                lst.push(value.bpm)
+               // lưu vào firestore
                 updateResult(lst)
+                // set lại list heartRateData để vẽ đồ thị
                 setHeartRateData(lst)
             }
         });
     }
 
+    // hàm này để kiểm tra xem hiện tại older này còn được gắn với thiết bị nhịp tim nào không
     const fetchMagament = async () => {
         try {
             const query = await getDocs(collection(fs, "magament"));
@@ -58,7 +67,7 @@ const OlderDetails = ({user, devices, myDevice}) => {
             setRun(false)
             query.forEach((doc) => {
                 const data = doc.data()
-                if (data.idOlder==user.getId() && data.idDevice==myDevice.getId() && myDevice.getName()==="sensor 1") {
+                if (data.idOlder==older.getId() && data.idDevice==myDevice.getId() && myDevice.getName()==="sensor 1") {
                     setRun(true)
                 }
             })
@@ -68,6 +77,7 @@ const OlderDetails = ({user, devices, myDevice}) => {
         }
     }
 
+    // như bên OlderForm
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchMagament()
@@ -76,6 +86,7 @@ const OlderDetails = ({user, devices, myDevice}) => {
         return () => clearTimeout(timer);
     }, [])
 
+    // gọi 1 lần 2 cái fecth này
     useEffect(() => {
         fetchResult();
         fetchMagament();
@@ -92,14 +103,14 @@ const OlderDetails = ({user, devices, myDevice}) => {
     return (
         <div className="details-main">
             <div className="details-user">
-                <img src={user.getAvatar()} className="details-user-avatar"/>
+                <img src={older.getAvatar()} className="details-user-avatar"/>
                 <div className="details-user-info">
                     <ul>
-                        <li><b>Name:</b> {user.getName()}</li>
-                        <li><b>Age:</b> {user.getAge()}</li>
-                        <li><b>Gender:</b> {user.getGender()}</li>
-                        <li><b>Phone:</b> {user.getPhone()}</li>
-                        <li><b>Address:</b> {user.getAddress()}</li>
+                        <li><b>Name:</b> {older.getName()}</li>
+                        <li><b>Age:</b> {older.getAge()}</li>
+                        <li><b>Gender:</b> {older.getGender()}</li>
+                        <li><b>Phone:</b> {older.getPhone()}</li>
+                        <li><b>Address:</b> {older.getAddress()}</li>
                     </ul>
                     <div className="details-realtime">
                         {
