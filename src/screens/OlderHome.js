@@ -27,7 +27,7 @@ const OlderHome = ({olders, devices}) => {
             setMotion(value["motion"])
 
         });
-    }, [1000])
+    }, [10])
 
     return (
         <div className="container">

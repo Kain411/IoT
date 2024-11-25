@@ -120,7 +120,7 @@ const OlderDetails = ({older, devices, myDevice}) => {
                         }
                         <div className="details-realtime-info">
                             <img src={require("../assets/heartbeat.png")} className="icon-heart"/>
-                            <span>{heartRateData[heartRateData.length-1]}npm</span>
+                            <span>{heartRateData[heartRateData.length-1]}bpm</span>
                         </div> 
                     </div>
                 </div>
